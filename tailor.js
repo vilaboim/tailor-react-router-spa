@@ -2,8 +2,15 @@
 
 const http = require('http')
 const Tailor = require('node-tailor')
+const path = require('path')
+const fetchTemplate = require('node-tailor/lib/fetch-template')
+
 const tailor = new Tailor({
-  templatesPath: __dirname + '/templates'
+  templatesPath: __dirname + '/templates',
+  fetchTemplate: fetchTemplate(
+    path.join(__dirname, 'templates'),
+    () => 'base-template'
+  )
 })
 
 http
@@ -12,9 +19,6 @@ http
       res.writeHead(200, { 'Content-Type': 'image/x-icon' })
       return res.end('')
     }
-
-    req.headers['x-request-uri'] = req.url
-    req.url = '/index'
 
     tailor.requestHandler(req, res)
   })
